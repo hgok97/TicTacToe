@@ -59,23 +59,110 @@ public class Main {
         }
     }
 
+    private static void placeCharacterOnBoard(boolean player, char[][] board, int[] inputCoordinates) {
+
+
+    }
+
+    /**
+     * Reads Input from Console
+     * @param input
+     * @return
+     */
     private static int[] readInput(Scanner input) {
 
         int[] coordinates = new int[2];
-        coordinates[0] = input.nextInt();
-        coordinates[1] = input.nextInt();
+        boolean okay = false;
+        int x = 0;
+        int y = 0;
+
+        x = getCoordinate('X', input);
+        y = getCoordinate('Y', input);
+
+
+        coordinates[0] = x;
+        coordinates[1] = y;
 
         return coordinates;
     }
 
+    /**
+     * Gets Coordinate and checks for Input Errors
+     * @param coordinateChar
+     * @param input
+     * @return
+     */
+    private static int getCoordinate(char coordinateChar, Scanner input) {
+
+        int coordinateNum = 0;
+        boolean okay = false;
+
+        do {
+            promptCoordinate(coordinateChar);
+            String inputCoordinateX = input.nextLine();
+            if (isInputDigit(inputCoordinateX)) {
+                // Alternativ kann man einfach mit chars arbeiten und abziehen von ASCII Dezimalwert bzw. vom Offset
+                coordinateNum = Integer.parseInt(inputCoordinateX.charAt(0)+"");
+
+                if (checkOutOfBounds(coordinateNum)) {
+                    okay = true;
+                }
+
+            }
+
+            if (!okay) {
+                printError();
+            }
+
+        } while (!okay);
+
+        return coordinateNum;
+    }
+
+    /**
+     * Checks if the given Input String is a Digit
+     * @param input
+     * @return true if String is a digit
+     */
+    private static boolean isInputDigit(String input) {
+
+        if (input.length() == 1) {
+
+            char c = input.charAt(0);
+            if (Character.isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param num
+     * @return true if number lies within given bounds, dependend on board size..
+     */
+    private static boolean checkOutOfBounds(int num) {
+        return num >= 0 && num <= 2;
+    }
+
+    private static void promptCoordinate(char c) {
+        System.out.print("Geben Sie die -" + c + "- Koordinate ein" + ": ");
+    }
+
+    private static void printError() {
+        System.out.println("Fehlerhafte Eingabe!");
+    }
+
+
+
+
     private static void promptPlayerTurn(boolean playerTurn) {
 
         String prefix = "Player ";
-        String postfix = "Geben Sie zwei Integer-Werte für die 2D-Matrix ein. [0-2] [0-2]";
         if (playerTurn) {
-            System.out.println(prefix + "O:\t" + postfix);
+            System.out.println(prefix + "O:");
         } else {
-            System.out.println(prefix + "X:\t" + postfix);
+            System.out.println(prefix + "X:");
         }
     }
 
