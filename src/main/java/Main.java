@@ -5,12 +5,13 @@ public class Main {
 
 
 
+    static int M = 3;
+    static int N = 3;
+
 
     public static void main(String[] args) {
 
-        int M = 3;
-        int N = 3;
-
+        int count = 1;
         char player1 = 'X';
         char player2 = 'O';
 
@@ -38,29 +39,104 @@ public class Main {
         boolean playerTurn = true;
 
         Scanner input = new Scanner(System.in);
+
+
         while (running) {
 
             // print current board
             printBoard(board);
             promptPlayerTurn(playerTurn);
+            char c = determinePlayer(playerTurn);
             int[] inputCoordinates = readInput(input);
 
-            char c;
-            if (playerTurn) {
-                c = 'O';
-            } else {
-                c = 'X';
-            }
-            board[inputCoordinates[0]][inputCoordinates[1]] = c;
-            // check if input is correct...
-            // check if game is over / won / draw
+            int x = inputCoordinates[0];
+            int y = inputCoordinates[1];
 
-            playerTurn = !playerTurn;
+
+
+            if (validMove(y, x, board)) {
+                board[y][x] = c;
+                playerTurn = !playerTurn;
+            } else {
+                System.out.println("Feld ist schon besetzt, wählen Sie einen validen Move");
+            }
+
+
+            // determine winner
+            if (isWinner(board, y, x, c)) {
+                System.out.println("The Winner is: " + c);
+                break;
+            } else {
+                count++;
+            }
+
+            System.out.println("-------------------------------------------------------------");
+
         }
     }
 
-    private static void placeCharacterOnBoard(boolean player, char[][] board, int[] inputCoordinates) {
+    private static boolean isWinner(char[][] board, int x, int y, char c) {
 
+        // naiv klapper alle Richtungen durch
+
+
+        // Checke die Zeile ab ob es einen "Treffer" gibt
+        boolean win = false;
+        for (int i = 0; i < M; i++) {
+            if (board[i][y] == c)  {
+                win = true;
+            } else {
+                win = false;
+                break;
+            }
+        }
+
+        // Spalte abchecken
+        for (int i = 0; i < N; i++) {
+            if (board[x][i] == c)  {
+                win = true;
+            } else {
+                win = false;
+                break;
+            }
+        }
+
+
+        // Diagonale abchecken
+
+        for (int i = 0; i < M; i++) {
+
+            for (int j = 0; j < N; j++) {
+
+                if (board[i][j] == c) {
+                    win = true;
+                } else {
+                    win = false;
+                    break;
+                }
+
+            }
+        }
+
+
+
+
+
+
+        return win;
+    }
+
+    private static char determinePlayer(boolean turn) {
+        if (turn) {
+            return 'O';
+        } else {
+            return 'X';
+        }
+    }
+
+    private static boolean validMove(int x, int y, char[][] board) {
+
+        return board[x][y] == '-';
 
     }
 
@@ -76,8 +152,8 @@ public class Main {
         int x = 0;
         int y = 0;
 
-        x = getCoordinate('X', input);
-        y = getCoordinate('Y', input);
+        x = getCoordinate('x', input);
+        y = getCoordinate('y', input);
 
 
         coordinates[0] = x;
@@ -152,9 +228,6 @@ public class Main {
     private static void printError() {
         System.out.println("Fehlerhafte Eingabe!");
     }
-
-
-
 
     private static void promptPlayerTurn(boolean playerTurn) {
 
